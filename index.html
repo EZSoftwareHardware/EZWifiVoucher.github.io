@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan Voucher WiFi Unlimited</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Soft background color for light mode */
+            color: #333; /* Default text color for light mode */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text color */
+        }
+
+        body.dark-mode .modal-content,
+        body.dark-mode .voucher-column,
+        body.dark-mode .custom-alert-content,
+        body.dark-mode #adminPanel,
+        body.dark-mode #voucherManagementSection,
+        body.dark-mode #salesDataModal .modal-content,
+        body.dark-mode #salesReportModal .modal-content {
+            background-color: #2d3748; /* Slightly lighter dark gray for content areas */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Adjust text colors for dark mode */
+        body.dark-mode .text-gray-900 { color: #f8fafc; } /* white-50 */
+        body.dark-mode .text-gray-800 { color: #f1f5f9; } /* slate-100 */
+        body.dark-mode .text-gray-700 { color: #e2e8f0; } /* slate-200 */
+        body.dark-mode .text-gray-600 { color: #cbd5e0; } /* slate-300 */
+        body.dark-mode .text-gray-500 { color: #94a3b8; } /* slate-400 */
+        body.dark-mode .text-gray-400 { color: #64748b; } /* slate-500 - for the 'a', 'b' labels on cards */
+        body.dark-mode .text-gray-300 { color: #475569; } /* slate-600 - for disabled buttons etc. */
+
+        /* Adjust element backgrounds and borders for dark mode */
+        body.dark-mode .bg-white { background-color: #2d3748; }
+        body.dark-mode .bg-gray-50 { background-color: #4a5568; } /* For input section background */
+        body.dark-mode .border-gray-200 { border-color: #4a5568; }
+        body.dark-mode .divide-gray-200 { border-color: #4a5568; }
+
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background-color: #4a5568;
+            border-color: #6b7280;
+            color: #e2e8f0;
+        }
+        body.dark-mode input::placeholder,
+        body.dark-mode textarea::placeholder {
+            color: #a0aec0;
+        }
+
+        body.dark-mode .total-box {
+            background-color: #4a5568;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .voucher-column-row {
+            border-bottom-color: #4a5568;
+        }
+
+        body.dark-mode .sales-header {
+            border-bottom-color: #4a5568;
+            color: #cbd5e0;
+        }
+        body.dark-mode .sales-item {
+            border-bottom-color: #4a5568;
+        }
+        body.dark-mode .sales-item .sales-date {
+            color: #a0aec0;
+        }
+        body.dark-mode hr {
+            border-color: #4a5568;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem; /* Reduced padding */
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            max-width: 90%;
+            width: 380px; /* Slightly reduced width for the modal */
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        /* Custom alert box styles */
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Higher than modal */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .custom-alert-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .custom-alert-content {
+            background-color: white;
+            padding: 1.5rem; /* Reduced padding */
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 320px; /* Reduced max width */
+            width: 90%;
+            text-align: center;
+        }
+        .custom-alert-content h3 {
+            font-size: 1.25rem; /* Reduced font size */
+            font-weight: bold;
+            margin-bottom: 0.75rem; /* Reduced margin */
+            color: #333;
+        }
+        .custom-alert-content p {
+            margin-bottom: 1rem; /* Reduced margin */
+            font-size: 0.9rem; /* Reduced font size */
+            color: #555;
+        }
+        .custom-alert-content button {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            padding: 0.6rem 1.2rem; /* Reduced padding */
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .custom-alert-content button:hover {
+            background-color: #2563eb; /* blue-600 */
+        }
+
+        /* Edit Voucher Modal Specific Styles */
+        #editVoucherModal .modal-content {
+            width: 90%; /* Wider for multiple cards */
+            max-width: 1100px; /* Slightly reduced max width for the edit modal */
+            overflow-y: auto; /* Enable scrolling for many cards */
+            max-height: 85vh; /* Slightly reduced height to viewport height */
+        }
+
+        /* Toggle switch styling */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px; /* Reduced width */
+            height: 28px; /* Reduced height */
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 28px; /* Adjusted border-radius */
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; /* Reduced size */
+            width: 20px; /* Reduced size */
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3; /* Blue for On */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(22px); /* Adjusted translateX */
+            -ms-transform: translateX(22px);
+            transform: translateX(22px);
+        }
+
+        /* Voucher Management Section specific styles */
+        .voucher-column {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 0.75rem; /* Reduced padding */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 100%; /* Ensure columns take full height */
+            display: flex;
+            flex-direction: column;
+        }
+        .voucher-column-header {
+            font-weight: bold;
+            font-size: 1.1rem; /* Slightly reduced font size */
+            margin-bottom: 0.5rem; /* Reduced margin */
+            text-align: center;
+            color: #333;
+        }
+        .voucher-column-row {
+            padding: 0.25rem 0; /* Reduced padding */
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem; /* Slightly reduced font size */
+            color: #555;
+            min-height: 1.4rem; /* Ensure consistent row height even if empty */
+            cursor: pointer; /* Make rows clickable */
+            transition: background-color 0.1s ease;
+        }
+        .voucher-column-row:hover {
+            background-color: #f3f4f6; /* Light gray on hover */
+        }
+        .voucher-column-row.selected-voucher-row {
+            background-color: #bfdbfe; /* Blue-200 for selected */
+            border-left: 4px solid #3b82f6; /* Blue-500 border */
+            font-weight: 600;
+        }
+        body.dark-mode .voucher-column-row.selected-voucher-row {
+            background-color: #4a5568; /* Darker background for selected in dark mode */
+            border-left-color: #63b3ed; /* Lighter blue border in dark mode */
+        }
+
+        .voucher-column-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Payment Method Modal specific styles */
+        #paymentMethodModal .modal-content {
+            width: 320px; /* Further reduced width */
+            padding: 1.25rem; /* Further reduced padding */
+        }
+        #paymentMethodModal .modal-content h2 {
+            font-size: 1.5rem; /* Adjusted font size */
+            margin-bottom: 1rem; /* Adjusted margin */
+        }
+        #paymentMethodModal .modal-content p {
+            font-size: 0.85rem; /* Adjusted font size */
+            margin-bottom: 1rem; /* Adjusted margin */
+        }
+        #paymentMethodModal .modal-content .space-y-4 { /* Target the form's space-y */
+            margin-bottom: 1.25rem; /* Adjusted margin */
+        }
+        #paymentMethodModal .modal-content .payment-option-group { /* New class for flex containers */
+            display: flex;
+            justify-content: space-between; /* Distribute items with space between */
+            gap: 0.5rem; /* Small gap between items */
+            margin-bottom: 0.5rem; /* Space between groups */
+        }
+        #paymentMethodModal .modal-content .payment-option-group label {
+            flex: 1; /* Allow labels to grow and shrink */
+            padding: 0.6rem; /* Adjusted padding for radio buttons */
+            text-align: center; /* Center text within each option */
+        }
+        #paymentMethodModal .modal-content label {
+            padding: 0.6rem; /* Adjusted padding for radio buttons */
+        }
+        #paymentMethodModal .modal-content label span {
+            font-size: 0.8rem; /* Adjusted font size for radio button text */
+        }
+        #paymentMethodModal .modal-content input[type="tel"],
+        #paymentMethodModal .modal-content input[type="email"] {
+            padding: 0.6rem 0.8rem; /* Adjusted padding for input fields */
+            font-size: 0.85rem; /* Adjusted font size for input fields */
+        }
+        #paymentMethodModal .modal-content button {
+            padding: 0.7rem 1.2rem; /* Adjusted padding for button */
+            font-size: 0.85rem; /* Adjusted font size for button */
+        }
+
+        /* Total Row styles */
+        .total-row-container {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0; /* Light border at the top */
+            display: grid;
+            grid-template-columns: repeat(8, minmax(0, 1fr)); /* 8 columns for A-H */
+            gap: 0.5rem; /* Gap between total boxes */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .total-box {
+            background-color: #e0f2fe; /* Light blue background */
+            padding: 0.75rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: #1e3a8a; /* Darker blue text */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Sales Report Modal specific styles */
+        #salesReportModal .modal-content {
+            width: 380px; /* Reduced width for the report modal */
+            padding: 1.25rem; /* Reduced padding */
+            max-height: 75vh; /* Adjusted height for scrollability */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        #salesReportModal .modal-content h2 {
+            font-size: 1.5rem; /* Adjusted font size */
+            margin-bottom: 1rem; /* Adjusted margin */
+        }
+        #salesReportModal .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0; /* Reduced padding */
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem; /* Adjusted font size */
+            color: #333;
+        }
+        #salesReportModal .report-item:last-child {
+            border-bottom: none;
+        }
+        #salesReportModal .report-item strong {
+            color: #059669; /* Green for revenue */
+            font-size: 1rem; /* Adjusted font size */
+        }
+        #salesReportModal .date-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Reduced gap */
+            margin-bottom: 0.75rem; /* Reduced margin */
+        }
+        #salesReportModal .date-input-group label {
+            font-size: 0.85rem; /* Adjusted font size */
+            font-weight: 500;
+            color: #4a5568;
+        }
+        #salesReportModal .date-input-group input[type="date"] {
+            flex: 1;
+            padding: 0.4rem 0.6rem; /* Reduced padding */
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            font-size: 0.85rem; /* Adjusted font size */
+            color: #2d3748;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        #salesReportModal .date-input-group input[type="date"]:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+        }
+        #salesReportModal .generate-custom-report-btn {
+            background-color: #4c51bf; /* Indigo-600 */
+            color: white;
+            padding: 0.6rem 1rem; /* Reduced padding */
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 0.5rem;
+            font-size: 0.9rem; /* Adjusted font size */
+        }
+        #salesReportModal .generate-custom-report-btn:hover {
+            background-color: #5a67d8; /* Indigo-700 */
+        }
+        #salesReportModal .modal-content .flex.justify-center.mt-6 button {
+            padding: 0.7rem 1.2rem; /* Adjusted padding for the close button */
+            font-size: 0.85rem; /* Adjusted font size for the close button */
+        }
+        #salesReportModal .modal-content hr {
+            margin-top: 1rem; /* Adjusted margin */
+            margin-bottom: 1rem; /* Adjusted margin */
+        }
+        #salesReportModal .modal-content h3 {
+            font-size: 1.1rem; /* Adjusted font size */
+            margin-bottom: 0.75rem; /* Adjusted margin */
+        }
+
+        /* Sales Data Modal specific styles */
+        #salesDataModal .modal-content {
+            width: 90%;
+            max-width: 600px; /* Max width for sales data modal */
+            padding: 1.5rem;
+            max-height: 80vh; /* Limit height for scrollability */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        #salesDataModal .modal-content h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        #salesDataModal .sales-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #salesDataModal .sales-header { /* New style for header row */
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for headers */
+            gap: 0.5rem;
+            text-align: center; /* Center header text */
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        body.dark-mode #salesDataModal .sales-header {
+            color: #cbd5e0;
+            border-bottom-color: #4a5568;
+        }
+        #salesDataModal .sales-item {
+            display: grid; /* Changed to grid */
+            grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for Price, WhatsApp, Code, Date */
+            gap: 0.5rem; /* Gap between grid items */
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #333;
+            text-align: center; /* Center text within sales items */
+        }
+        body.dark-mode #salesDataModal .sales-item {
+            border-bottom-color: #4a5568;
+            color: #e2e8f0;
+        }
+        #salesDataModal .sales-item:last-child {
+            border-bottom: none;
+        }
+        #salesDataModal .sales-item .sales-price {
+            font-weight: 600;
+            color: #059669;
+        }
+        #salesDataModal .sales-item .sales-date {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        body.dark-mode #salesDataModal .sales-item .sales-date {
+            color: #a0aec0;
+        }
+        #salesDataModal .no-sales-message {
+            text-align: center;
+            color: #6b7280;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <!-- Header Section -->
+        <header id="mainHeader" class="text-center mb-10 mt-6 relative w-full max-w-7xl px-4">
+            <h1 id="mainTitle" class="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
+                EZvoucher - Voucher WiFi Unlimited
+            </h1>
+            <p id="mainSubtitle" class="text-lg text-gray-600 max-w-2xl mx-auto mb-5">
+                Dapatkan akses internet tanpa batas. Pilih paket yang sesuai dengan kebutuhan Anda!
+            </p>
+            <!-- Current Date and Time Display and Admin Login/Logout Button Container -->
+            <div class="flex items-center justify-center space-x-4 mt-2">
+                <div id="dateTimeDisplay" class="text-gray-700 text-sm font-medium">
+                    <!-- Date and time will be updated here by JavaScript -->
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="adminLoginBtn" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-1.5 px-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                        Login Admin
+                    </button>
+                    <button id="adminLogoutBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg hidden text-sm">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Voucher Cards Section -->
+        <main id="voucherSection" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <!-- Voucher cards will be dynamically inserted here by JavaScript -->
+        </main>
+
+        <!-- Admin Panel Section (Initially Hidden) -->
+        <section id="adminPanel" class="hidden w-full max-w-3xl mx-auto p-5 bg-white rounded-xl shadow-lg mt-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Halaman Admin</h2>
+
+            <!-- Removed "Daftar Pengguna (Contoh)" section -->
+
+            <div class="flex flex-col sm:flex-row justify-center gap-3 mt-6">
+                <button id="changeAdminCredsBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Ubah User dan Password
+                </button>
+                <button id="editVoucherBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Durasi dan Tarif
+                </button>
+                <button id="viewVouchersBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Kelola Voucher
+                </button>
+                <!-- Sales Report Button -->
+                <button id="salesReportBtn" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Laporan Penjualan
+                </button>
+                <!-- Sales Data Button (New) -->
+                <button id="salesDataBtn" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Data Penjualan
+                </button>
+                <!-- Payment Gateway Button (New) -->
+                <button id="paymentGatewayBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Payment Gateway
+                </button>
+            </div>
+        </section>
+
+        <!-- Voucher Management Section (Initially Hidden) -->
+        <section id="voucherManagementSection" class="hidden w-full max-w-6xl mx-auto p-5 bg-white rounded-xl shadow-lg mt-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Manajemen Voucher</h2>
+
+            <!-- Data Input Section -->
+            <div class="mb-5 p-3 bg-gray-50 rounded-lg shadow-inner">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3">Isi Data Kolom</h3>
+                <div class="flex flex-col sm:flex-row items-center gap-3 mb-3">
+                    <label for="selectColumn" class="text-gray-700 font-medium whitespace-nowrap text-sm">Pilih Kolom:</label>
+                    <select id="selectColumn" class="flex-grow w-full sm:w-auto px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900">
+                        <!-- Options A-H will be added by JS -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="excelPasteArea" class="block text-sm font-medium text-gray-700 mb-1">Tempel Data dari Excel (satu baris per data):</label>
+                    <textarea id="excelPasteArea" rows="4" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" placeholder="Paste data here, one data item per line"></textarea>
+                </div>
+                <button id="loadColumnDataBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Muat Data ke Kolom
+                </button>
+            </div>
+
+            <div id="voucherColumnsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mb-5">
+                <!-- Columns will be dynamically inserted here -->
+            </div>
+
+            <!-- Total Row Section -->
+            <div id="totalRowContainer" class="total-row-container">
+                <!-- Total boxes will be dynamically inserted here -->
+            </div>
+
+            <div class="flex justify-between items-center mt-5">
+                <button id="prevPageBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-1.5 px-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm" disabled>
+                    Previous
+                </button>
+                <span id="pageInfo" class="text-gray-700 font-medium text-sm">Page 1 of 20</span>
+                <button id="nextPageBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1.5 px-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Next
+                </button>
+            </div>
+            <div class="flex justify-center mt-6 gap-3">
+                <button id="refreshVoucherDataBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Refresh Voucher
+                </button>
+                <button id="multiSelectToggleBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Mode Hapus Voucher
+                </button>
+                <button id="deleteSelectedVoucherBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Hapus Voucher Terpilih
+                </button>
+                <button id="backToAdminPanelFromVoucherMgmt" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Kembali ke Halaman Admin
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="text-center mt-10 mb-6 text-gray-500 text-xs">
+            <!-- Theme Toggle Button -->
+            <div class="mb-4">
+                <button id="themeToggleBtn" class="bg-green-600 dark:bg-green-700 text-white dark:text-white font-semibold py-1.5 px-3 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Mode Gelap
+                </button>
+            </div>
+            <p>&copy; 2025 Voucher WiFi Unlimited. Semua hak dilindungi.</p>
+        </footer>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Login Admin</h2>
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                    <input type="text" id="username" name="username" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" placeholder="Masukkan username Anda" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                    <input type="password" id="password" name="password" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" placeholder="Masukkan password Anda" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-base">
+                    Login
+                </button>
+            </form>
+            <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Edit Voucher Modal -->
+    <div id="editVoucherModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Edit Durasi dan Harga Voucher</h2>
+            <form id="editVoucherForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Editable voucher cards will be dynamically inserted here -->
+            </form>
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="editHeaderBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Edit Header
+                </button>
+                <button type="button" id="saveVoucherChangesBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Simpan Perubahan
+                </button>
+                <button type="button" id="cancelEditVoucherBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Batal
+                </button>
+            </div>
+            <button id="closeEditVoucherModalBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Edit Header Modal (New) -->
+    <div id="editHeaderModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Edit Teks Header</h2>
+            <form id="editHeaderForm" class="space-y-4">
+                <div>
+                    <label for="headerTitleInput" class="block text-sm font-medium text-gray-700 mb-1">Judul Utama</label>
+                    <input type="text" id="headerTitleInput" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900">
+                </div>
+                <div>
+                    <label for="headerSubtitleInput" class="block text-sm font-medium text-gray-700 mb-1">Sub-judul</label>
+                    <textarea id="headerSubtitleInput" rows="3" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="submit" id="saveHeaderChangesBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                        Simpan Perubahan
+                    </button>
+                    <button type="button" id="cancelHeaderEditBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                        Batal
+                    </button>
+                </div>
+            </form>
+            <button id="closeEditHeaderModalBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Change Admin Credentials Modal (New) -->
+    <div id="changeAdminCredsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Ubah Username & Password Admin</h2>
+            <form id="changeAdminCredsForm" class="space-y-4">
+                <div>
+                    <label for="currentAdminUsername" class="block text-sm font-medium text-gray-700 mb-1">Username Admin Saat Ini</label>
+                    <input type="text" id="currentAdminUsername" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" required>
+                </div>
+                <div>
+                    <label for="currentAdminPassword" class="block text-sm font-medium text-gray-700 mb-1">Password Admin Saat Ini</label>
+                    <input type="password" id="currentAdminPassword" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" required>
+                </div>
+                <hr class="my-4 border-gray-200">
+                <div>
+                    <label for="newAdminUsername" class="block text-sm font-medium text-gray-700 mb-1">Username Admin Baru</label>
+                    <input type="text" id="newAdminUsername" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" required>
+                </div>
+                <div>
+                    <label for="newAdminPassword" class="block text-sm font-medium text-gray-700 mb-1">Password Admin Baru</label>
+                    <input type="password" id="newAdminPassword" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900" required>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="submit" id="saveAdminCredsBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                        Simpan Perubahan
+                    </button>
+                    <button type="button" id="cancelAdminCredsBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                        Batal
+                    </button>
+                </div>
+            </form>
+            <button id="closeChangeAdminCredsModalBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+
+    <!-- Payment Method Selection Modal -->
+    <div id="paymentMethodModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Pilih Metode Pembayaran</h2>
+            <form id="paymentMethodForm" class="space-y-4">
+                <p class="text-sm text-gray-700 text-center mb-2">Untuk <span id="paymentVoucherName" class="font-semibold"></span></p>
+
+                <div class="space-y-2">
+                    <!-- Transfer Bank and QRIS in a flex container -->
+                    <div class="payment-option-group">
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="Bank Transfer" class="form-radio h-3.5 w-3.5 text-blue-600" required>
+                            <span class="text-gray-800 font-medium text-xs">Transfer Bank</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="QRIS" class="form-radio h-3.5 w-3.5 text-red-600">
+                            <span class="text-gray-800 font-medium text-xs">QRIS</span>
+                        </label>
+                    </div>
+                    <!-- OVO and Gopay in a flex container -->
+                    <div class="payment-option-group">
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="OVO" class="form-radio h-3.5 w-3.5 text-purple-600">
+                            <span class="text-gray-800 font-medium text-xs">OVO</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="Gopay" class="form-radio h-3.5 w-3.5 text-green-600">
+                            <span class="text-gray-800 font-medium text-xs">Gopay</span>
+                        </label>
+                    </div>
+                    <!-- DANA and Shopee Pay in a flex container -->
+                    <div class="payment-option-group">
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="DANA" class="form-radio h-3.5 w-3.5 text-blue-500">
+                            <span class="text-gray-800 font-medium text-xs">DANA</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+                            <input type="radio" name="paymentMethod" value="Shopee Pay" class="form-radio h-3.5 w-3.5 text-orange-500">
+                            <span class="text-gray-800 font-medium text-xs">Shopee Pay</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="whatsappNumber" class="block text-xs font-medium text-gray-700 mb-1">Nomor WhatsApp</label>
+                    <input type="tel" id="whatsappNumber" name="whatsappNumber" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-xs text-gray-900" placeholder="Contoh: 081234567890" required>
+                </div>
+                <div>
+                    <label for="emailAddress" class="block text-xs font-medium text-gray-700 mb-1">Alamat Email</label>
+                    <input type="email" id="emailAddress" name="emailAddress" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-xs text-gray-900" placeholder="Contoh: nama@example.com" required>
+                </div>
+                <button type="submit" id="continuePaymentBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Lanjutkan Pembayaran
+                </button>
+            </form>
+            <button id="closePaymentMethodModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-lg font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div id="paymentProcessingModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="paymentModalTitle" class="text-2xl font-bold text-gray-800 mb-3">Memproses Pembayaran...</h2>
+            <p id="paymentModalMessage" class="text-base text-gray-600 mb-5">Mengarahkan ke halaman pembayaran...</p>
+            <!-- Centered "Tutup" button with green background -->
+            <div class="flex justify-center mt-5">
+                <button id="closePaymentModalBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg hidden text-sm">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Report Modal -->
+    <div id="salesReportModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5 text-center">Laporan Penjualan</h2>
+
+            <div class="space-y-4 mb-6">
+                <div class="report-item">
+                    <span>Total Pendapatan Harian:</span>
+                    <strong id="dailyRevenue">Rp 0</strong>
+                </div>
+                <!-- Removed "Total Pendapatan Mingguan" -->
+                <div class="report-item">
+                    <span>Total Pendapatan Bulanan:</span>
+                    <strong id="monthlyRevenue">Rp 0</strong>
+                </div>
+            </div>
+
+            <hr class="my-4 border-gray-200">
+
+            <div class="date-input-group">
+                <label for="startDate">Dari:</label>
+                <input type="date" id="startDate" class="w-full">
+            </div>
+            <div class="date-input-group">
+                <label for="endDate">Sampai:</label>
+                <input type="date" id="endDate" class="w-full">
+            </div>
+            <button id="generateCustomReportBtn" class="generate-custom-report-btn">
+                Buat Laporan Kustom
+            </button>
+            <div class="report-item mt-4">
+                <span>Total Pendapatan Kustom:</span>
+                <strong id="customRevenue">Rp 0</strong>
+            </div>
+
+            <div class="flex justify-center mt-6">
+                <button id="closeSalesReportModalBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Tutup
+                </button>
+            </div>
+            <button id="closeSalesReportModalXBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Sales Data Modal (New) -->
+    <div id="salesDataModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Data Penjualan Berhasil</h2>
+            <div class="sales-header">
+                <span>Harga</span>
+                <span>No WhatsApp</span>
+                <span>Kode Voucher</span>
+                <span>Tanggal</span>
+            </div>
+            <ul id="successfulSalesList" class="sales-list">
+                <!-- Sales data will be inserted here -->
+            </ul>
+            <div class="flex justify-center mt-6">
+                <button id="closeSalesDataModalBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg text-sm">
+                    Tutup
+
+                </button>
+            </div>
+            <button id="closeSalesDataModalXBtn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Custom Alert Box -->
+    <div id="customAlert" class="custom-alert-overlay">
+        <div class="custom-alert-content">
+            <h3 id="alertTitle"></h3>
+            <p id="alertMessage"></p>
+            <button id="closeAlertBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Initial voucher data for main sales page
+        let vouchers = [
+            { id: 'harian', name: 'Paket Harian', duration: '1 hari', price: 5000, color: 'blue', isActive: true },
+            { id: '3hari', name: 'Paket 3 Hari', duration: '3 hari', price: 12000, color: 'green', isActive: true },
+            { id: 'mingguan', name: 'Paket Mingguan', duration: '7 hari', price: 25000, color: 'purple', isActive: true },
+            { id: '2minggu', name: 'Paket 2 Minggu', duration: '14 hari', price: 45000, color: 'yellow', isActive: true },
+            { id: 'bulanan', name: 'Paket Bulanan', duration: '30 hari', price: 80000, color: 'red', isActive: true },
+            { id: '2bulan', name: 'Paket 2 Bulan', duration: '60 hari', price: 150000, color: 'indigo', isActive: true },
+            { id: '3bulan', name: 'Paket 3 Bulan', duration: '90 hari', price: 210000, color: 'teal', isActive: true },
+            { id: '6bulan', name: 'Paket 6 Bulan', duration: '6 bulan', price: 400000, color: 'pink', isActive: true },
+        ];
+
+        // Voucher Management Section variables
+        const columnLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        const totalRowsPerColumn = 200;
+        const rowsPerPage = 10;
+        let currentVoucherPage = 1;
+        const totalVoucherPages = Math.ceil(totalRowsPerColumn / rowsPerPage);
+
+        // Data structure to hold data for each column
+        // Each sub-array represents a column, and contains 200 rows of data.
+        let columnData = Array.from({ length: columnLabels.length }, () => Array(totalRowsPerColumn).fill(''));
+
+        // Simulated sales log
+        // Each entry: { price: number, timestamp: Date, whatsapp: string, voucherCode: string }
+        let salesLog = [];
+
+        // Admin credentials (hardcoded for now, replace with secure storage in real app)
+        const masterUsername = 'danang';
+        const masterPassword = 'danang1975@';
+        let regularAdminUsername = 'admin'; // Can be changed
+        let regularAdminPassword = 'admin123'; // Can be changed
+
+        let isMasterAdmin = false; // Flag to track if the logged-in user is the master admin
+
+        // Array to store currently selected voucher rows for multi-deletion
+        // Each item: { element: DOMElement, colIndex: number, rowIndex: number }
+        let selectedVoucherRows = [];
+        let isMultiSelectMode = false; // New flag for multi-selection mode
+
+        // Function to show custom alert
+        function showAlert(title, message) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('customAlert').classList.add('show');
+        }
+
+        // Function to render voucher cards on the main page
+        function renderVoucherCards() {
+            const voucherSection = document.getElementById('voucherSection');
+            voucherSection.innerHTML = ''; // Clear existing cards
+            vouchers.forEach((voucher, index) => {
+                // Only render the card if it is active
+                if (voucher.isActive) {
+                    // Get the corresponding label (a, b, c, etc.)
+                    const cardLabel = columnLabels[index] ? columnLabels[index].toLowerCase() : '';
+                    
+                    // Calculate stock for the current voucher's column
+                    const stockCount = columnData[index].filter(item => item.trim() !== '').length;
+
+                    // Determine button state based on stock
+                    const isDisabled = stockCount === 0;
+                    const buttonClasses = isDisabled
+                        ? `bg-gray-400 cursor-not-allowed opacity-70`
+                        : `bg-${voucher.color}-600 hover:bg-${voucher.color}-700`;
+                    const buttonDisabledAttribute = isDisabled ? 'disabled' : '';
+
+                    const card = `
+                        <div class="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 flex flex-col justify-between border border-${voucher.color}-100">
+                            <div class="absolute top-2 right-3 text-xl font-bold text-gray-400">
+                                ${cardLabel}
+                            </div>
+                            <div class="text-center">
+                                <h2 class="text-xl font-bold text-${voucher.color}-600 mb-2">${voucher.name}</h2>
+                                <div class="text-4xl font-extrabold text-gray-900 mb-2">
+                                    Rp ${voucher.price.toLocaleString('id-ID')}
+                                </div>
+                                <p class="text-lg text-gray-500 mb-2">${voucher.duration}</p>
+                                <!-- Display Stock -->
+                                <p class="text-sm font-semibold ${stockCount <= 5 ? 'text-red-600' : (stockCount > 20 ? 'text-green-600' : 'text-yellow-600')}">Stock: ${stockCount}</p>
+                            </div>
+                            <button class="w-full ${buttonClasses} text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg mt-4 buy-now-btn" data-voucher-index="${index}" data-voucher-name="${voucher.name}" ${buttonDisabledAttribute}>
+                                Beli Sekarang
+                            </button>
+                        </div>
+                    `;
+                    voucherSection.insertAdjacentHTML('beforeend', card);
+                }
+            });
+
+            // Add event listeners to all "Beli Sekarang" buttons
+            document.querySelectorAll('.buy-now-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // Only proceed if the button is not disabled
+                    if (!event.target.disabled) {
+                        const voucherName = event.target.dataset.voucherName;
+                        const voucherIndex = parseInt(event.target.dataset.voucherIndex);
+                        // Instead of directly simulating payment, show payment method selection
+                        showPaymentMethodSelection(voucherName, voucherIndex);
+                    }
+                });
+            });
+        }
+
+        // Function to render editable voucher forms in the modal
+        function renderEditableVoucherForms() {
+            const editVoucherForm = document.getElementById('editVoucherForm');
+            editVoucherForm.innerHTML = ''; // Clear existing forms
+
+            const voucherDisplayNames = {
+                'harian': 'a',
+                '3hari': 'b',
+                'mingguan': 'c',
+                '2minggu': 'd',
+                'bulanan': 'e',
+                '2bulan': 'f',
+                '3bulan': 'g',
+                '6bulan': 'h'
+            };
+
+            vouchers.forEach(voucher => {
+                const displayName = voucherDisplayNames[voucher.id] || voucher.name; // Use letter or original name if not found
+                const formHtml = `
+                    <div class="bg-white rounded-xl shadow-md p-4 border border-${voucher.color}-100">
+                        <h3 class="text-xl font-semibold text-${voucher.color}-600 mb-3">Edit Voucher ${displayName}</h3>
+                        <div class="mb-3">
+                            <label for="name-${voucher.id}" class="block text-sm font-medium text-gray-700 mb-1">Nama Paket (Tampilan)</label>
+                            <input type="text" id="name-${voucher.id}" name="name-${voucher.id}" value="${voucher.name}"
+                                class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-${voucher.color}-500 focus:border-${voucher.color}-500 text-sm text-gray-900">
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration-${voucher.id}" class="block text-sm font-medium text-gray-700 mb-1">Durasi</label>
+                            <input type="text" id="duration-${voucher.id}" name="duration-${voucher.id}" value="${voucher.duration}"
+                                class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-${voucher.color}-500 focus:border-${voucher.color}-500 text-sm text-gray-900">
+                        </div>
+                        <div class="mb-3">
+                            <label for="price-${voucher.id}" class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
+                            <input type="number" id="price-${voucher.id}" name="price-${voucher.id}" value="${voucher.price}"
+                                class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg focus:ring-${voucher.color}-500 focus:border-${voucher.color}-500 text-sm text-gray-900">
+                        </div>
+                        <div class="flex items-center justify-between mb-3">
+                            <label for="isActive-${voucher.id}" class="block text-sm font-medium text-gray-700">Status (On/Off)</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="isActive-${voucher.id}" ${voucher.isActive ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+                editVoucherForm.insertAdjacentHTML('beforeend', formHtml);
+            });
+        }
+
+        // Function to render voucher management columns
+        function renderVoucherManagementColumns() {
+            const voucherColumnsContainer = document.getElementById('voucherColumnsContainer');
+            voucherColumnsContainer.innerHTML = ''; // Clear existing columns
+
+            const startIndex = (currentVoucherPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+
+            columnLabels.forEach((label, colIndex) => {
+                const columnDiv = document.createElement('div');
+                columnDiv.className = 'voucher-column';
+                // Change "Kolom X" to "Voucher X"
+                columnDiv.innerHTML = `<div class="voucher-column-header">Voucher ${label}</div>`;
+
+                for (let i = startIndex; i < endIndex && i < totalRowsPerColumn; i++) {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'voucher-column-row';
+                    rowDiv.textContent = columnData[colIndex][i];
+                    rowDiv.dataset.colIndex = colIndex; // Store column index
+                    rowDiv.dataset.rowIndex = i; // Store row index
+
+                    // Check if this row is currently selected and apply the class
+                    const isSelected = selectedVoucherRows.some(
+                        (item) => item.colIndex === colIndex && item.rowIndex === i
+                    );
+                    if (isSelected) {
+                        rowDiv.classList.add('selected-voucher-row');
+                    }
+
+                    // Add click listener for selection
+                    rowDiv.addEventListener('click', (event) => {
+                        const clickedColIndex = parseInt(event.currentTarget.dataset.colIndex);
+                        const clickedRowIndex = parseInt(event.currentTarget.dataset.rowIndex);
+                        const currentVoucherCode = columnData[clickedColIndex][clickedRowIndex];
+
+                        // If the row is empty, do not allow selection
+                        if (currentVoucherCode.trim() === '') {
+                            showAlert('Peringatan!', 'Tidak dapat memilih baris kosong.');
+                            return;
+                        }
+
+                        if (isMultiSelectMode) {
+                            const existingIndex = selectedVoucherRows.findIndex(
+                                (item) => item.colIndex === clickedColIndex && item.rowIndex === clickedRowIndex
+                            );
+
+                            // Check if the clicked row is in a different column than already selected rows
+                            if (selectedVoucherRows.length > 0 && selectedVoucherRows[0].colIndex !== clickedColIndex) {
+                                // Clear all existing selections if a different column is clicked
+                                selectedVoucherRows.forEach((item) => item.element.classList.remove('selected-voucher-row'));
+                                selectedVoucherRows = [];
+                                // Then select the new row in the new column
+                                selectedVoucherRows.push({
+                                    element: event.currentTarget,
+                                    colIndex: clickedColIndex,
+                                    rowIndex: clickedRowIndex,
+                                });
+                                event.currentTarget.classList.add('selected-voucher-row');
+                                showAlert('Perhatian!', 'Pilihan dibatasi pada satu kolom. Pilihan sebelumnya dihapus.');
+                            } else if (existingIndex !== -1) {
+                                // Deselect if already selected
+                                selectedVoucherRows.splice(existingIndex, 1);
+                                event.currentTarget.classList.remove('selected-voucher-row');
+                            } else {
+                                // Select if not already selected, but check limit
+                                if (selectedVoucherRows.length < 10) {
+                                    selectedVoucherRows.push({
+                                        element: event.currentTarget,
+                                        colIndex: clickedColIndex,
+                                        rowIndex: clickedRowIndex,
+                                    });
+                                    event.currentTarget.classList.add('selected-voucher-row');
+                                } else {
+                                    showAlert('Peringatan!', 'Anda dapat memilih maksimal 10 baris sekaligus.');
+                                }
+                            }
+                        } else {
+                            // Normal single selection mode
+                            selectedVoucherRows.forEach((item) => item.element.classList.remove('selected-voucher-row'));
+                            selectedVoucherRows = []; // Clear the array
+
+                            selectedVoucherRows.push({
+                                element: event.currentTarget,
+                                colIndex: clickedColIndex,
+                                rowIndex: clickedRowIndex,
+                            });
+                            event.currentTarget.classList.add('selected-voucher-row');
+                        }
+                    });
+
+                    columnDiv.appendChild(rowDiv);
+                }
+                voucherColumnsContainer.appendChild(columnDiv);
+            });
+
+            // Update pagination info
+            document.getElementById('pageInfo').textContent = `Page ${currentVoucherPage} of ${totalVoucherPages}`;
+
+            // Manage Next/Previous button states
+            document.getElementById('prevPageBtn').disabled = currentVoucherPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentVoucherPage === totalVoucherPages;
+
+            // Render total row
+            renderTotalRow();
+        }
+
+        // Function to render the total row
+        function renderTotalRow() {
+            const totalRowContainer = document.getElementById('totalRowContainer');
+            totalRowContainer.innerHTML = ''; // Clear existing totals
+
+            columnLabels.forEach((label, colIndex) => {
+                // Calculate the count of non-empty strings in the column
+                const totalCount = columnData[colIndex].filter(item => item.trim() !== '').length;
+
+                const totalBox = `
+                    <div class="total-box">
+                        Total ${label}: ${totalCount}
+                    </div>
+                `;
+                totalRowContainer.insertAdjacentHTML('beforeend', totalBox);
+            });
+            // After rendering the totals, refresh the main voucher cards to update stock display
+            renderVoucherCards();
+        }
+
+        // Function to show payment method selection modal
+        function showPaymentMethodSelection(voucherName, voucherIndex) {
+            const paymentMethodModal = document.getElementById('paymentMethodModal');
+            document.getElementById('paymentVoucherName').textContent = voucherName;
+
+            // Reset form fields
+            document.getElementById('paymentMethodForm').reset();
+            document.getElementById('whatsappNumber').value = '';
+            document.getElementById('emailAddress').value = '';
+
+            paymentMethodModal.classList.add('show');
+
+            // Store voucher details for later use when payment is continued
+            paymentMethodModal.dataset.voucherName = voucherName;
+            paymentMethodModal.dataset.voucherIndex = voucherIndex;
+        }
+
+        // Function to process the final payment after method selection
+        function processFinalPayment(voucherName, voucherIndex, whatsapp, email, paymentMethod) {
+            const paymentProcessingModal = document.getElementById('paymentProcessingModal');
+            const paymentModalTitle = document.getElementById('paymentModalTitle');
+            const paymentModalMessage = document.getElementById('paymentModalMessage');
+            const closePaymentModalBtn = document.getElementById('closePaymentModalBtn');
+
+            // Reset modal content
+            paymentModalTitle.textContent = 'Memproses Pembayaran...';
+            paymentModalMessage.innerHTML = `Mengarahkan ke halaman pembayaran untuk ${voucherName} melalui ${paymentMethod}...<br>Nomor WhatsApp: ${whatsapp}<br>Email: ${email}`;
+            closePaymentModalBtn.classList.add('hidden'); // Hide button initially
+            closePaymentModalBtn.textContent = 'Tutup'; // Reset button text
+
+            paymentProcessingModal.classList.add('show');
+
+            // Simulate payment processing delay
+            setTimeout(() => {
+                const isSuccess = Math.random() < 0.8; // 80% chance of success for simulation
+
+                if (isSuccess) {
+                    let voucherCode = '';
+                    const targetColumn = columnData[voucherIndex];
+
+                    // Find the first non-empty voucher code in the column
+                    const codeIndex = targetColumn.findIndex(code => code.trim() !== '');
+
+                    if (codeIndex !== -1) {
+                        voucherCode = targetColumn[codeIndex];
+                        targetColumn[codeIndex] = ''; // Mark as used by clearing it
+
+                        // Record the sale in salesLog
+                        const soldVoucher = vouchers[voucherIndex];
+                        if (soldVoucher) {
+                            salesLog.push({
+                                price: soldVoucher.price,
+                                timestamp: new Date(),
+                                whatsapp: whatsapp, // Add WhatsApp number
+                                voucherCode: voucherCode // Add voucher code
+                            });
+                            console.log('Sales Log:', salesLog); // For debugging
+                        }
+
+                        paymentModalTitle.textContent = 'Pembayaran Berhasil!';
+                        paymentModalMessage.innerHTML = `Voucher ${voucherName} Anda berhasil dibeli.<br>Kode Voucher Anda: <strong class="text-green-600">${voucherCode}</strong><br>Informasi akan dikirim ke WhatsApp: ${whatsapp} dan Email: ${email}.`;
+                        closePaymentModalBtn.classList.remove('hidden');
+                        closePaymentModalBtn.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-blue-600', 'hover:bg-blue-700'); // Remove old colors
+                        closePaymentModalBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white'); // Add green color
+                        closePaymentModalBtn.textContent = 'Tutup';
+                        renderVoucherManagementColumns(); // Re-render management columns to reflect used code
+                    } else {
+                        // If no voucher code is available, still record the sale but with an empty voucherCode
+                        const soldVoucher = vouchers[voucherIndex];
+                        if (soldVoucher) {
+                            salesLog.push({
+                                price: soldVoucher.price,
+                                timestamp: new Date(),
+                                whatsapp: whatsapp, // Add WhatsApp number
+                                voucherCode: 'Tidak Tersedia' // Indicate no code was found
+                            });
+                            console.log('Sales Log (no code):', salesLog); // For debugging
+                        }
+                        paymentModalTitle.textContent = 'Pembayaran Berhasil (Tanpa Kode)!';
+                        paymentModalMessage.innerHTML = `Voucher ${voucherName} Anda berhasil dibeli, tetapi tidak ada kode voucher yang tersedia di kolom ini.<br>Informasi akan dikirim ke WhatsApp: ${whatsapp} dan Email: ${email}.`;
+                        closePaymentModalBtn.classList.remove('hidden');
+                        closePaymentModalBtn.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-blue-600', 'hover:bg-blue-700'); // Remove old colors
+                        closePaymentModalBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white'); // Add green color
+                        closePaymentModalBtn.textContent = 'Tutup';
+                    }
+
+                } else {
+                    paymentModalTitle.textContent = 'Pembayaran Gagal!';
+                    paymentModalMessage.innerHTML = `Maaf, pembayaran untuk voucher ${voucherName} melalui ${paymentMethod} gagal. Silakan coba lagi.<br>Nomor WhatsApp: ${whatsapp}<br>Email: ${email}.`;
+                    closePaymentModalBtn.classList.remove('hidden');
+                    closePaymentModalBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+                    closePaymentModalBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                    closePaymentModalBtn.textContent = 'Tutup';
+                }
+            }, 3000); // Simulate 3 seconds processing time
+
+            // Event listener for the close button on the payment modal
+            closePaymentModalBtn.onclick = () => {
+                paymentProcessingModal.classList.remove('show');
+            };
+        }
+
+        // Function to update the current date and time
+        function updateDateTime() {
+            const dateTimeDisplay = document.getElementById('dateTimeDisplay');
+            if (dateTimeDisplay) {
+                const now = new Date();
+
+                // Format time to 24-hour format (HH:mm:ss)
+                const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' };
+                const formattedTime = now.toLocaleTimeString('id-ID', timeOptions);
+
+                // Format date to "tanggal bulan tahun" (dd Month yyyy)
+                const dateOptions = { day: '2-digit', month: 'long', year: 'numeric' };
+                const formattedDate = now.toLocaleDateString('id-ID', dateOptions);
+
+                dateTimeDisplay.textContent = `${formattedDate}, ${formattedTime}`;
+            }
+        }
+
+        // Function to calculate and display sales report
+        function generateSalesReport(startDate = null, endDate = null) {
+            const now = new Date();
+            const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+            const oneMonthAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)); // Approximate month
+
+            let dailyRevenue = 0;
+            let monthlyRevenue = 0;
+            let customRevenue = 0;
+
+            salesLog.forEach(sale => {
+                const saleDate = sale.timestamp;
+                if (saleDate >= oneDayAgo) {
+                    dailyRevenue += sale.price;
+                }
+                if (saleDate >= oneMonthAgo) {
+                    monthlyRevenue += sale.price;
+                }
+
+                // Calculate custom revenue if dates are provided
+                if (startDate && endDate && saleDate >= startDate && saleDate <= endDate) {
+                    customRevenue += sale.price;
+                }
+            });
+
+            document.getElementById('dailyRevenue').textContent = `Rp ${dailyRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('monthlyRevenue').textContent = `Rp ${monthlyRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('customRevenue').textContent = `Rp ${customRevenue.toLocaleString('id-ID')}`;
+
+
+            // Set default values for date inputs if not already set
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const formattedToday = `${year}-${month}-${day}`;
+
+            if (!document.getElementById('startDate').value) {
+                document.getElementById('startDate').value = formattedToday;
+            }
+            if (!document.getElementById('endDate').value) {
+                document.getElementById('endDate').value = formattedToday;
+            }
+
+            document.getElementById('salesReportModal').classList.add('show');
+        }
+
+        // Function to display successful sales data
+        function displaySuccessfulSalesData() {
+            const successfulSalesList = document.getElementById('successfulSalesList');
+            successfulSalesList.innerHTML = ''; // Clear previous data
+
+            if (salesLog.length === 0) {
+                successfulSalesList.innerHTML = '<li class="no-sales-message">Belum ada data penjualan.</li>';
+            } else {
+                // Sort salesLog by timestamp in descending order (most recent first)
+                const sortedSales = [...salesLog].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+                // Get the last 100 sales (or fewer if less than 100)
+                const recentSales = sortedSales.slice(0, 100);
+
+                recentSales.forEach(sale => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'sales-item';
+                    const formattedPrice = `Rp ${sale.price.toLocaleString('id-ID')}`;
+                    const formattedDate = sale.timestamp.toLocaleString('id-ID', {
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        hourCycle: 'h23'
+                    });
+                    // Add WhatsApp and Voucher Code
+                    listItem.innerHTML = `
+                        <span class="sales-price">${formattedPrice}</span>
+                        <span>${sale.whatsapp || '-'}</span>
+                        <span>${sale.voucherCode || '-'}</span>
+                        <span class="sales-date">${formattedDate}</span>
+                    `;
+                    successfulSalesList.appendChild(listItem);
+                });
+            }
+            document.getElementById('salesDataModal').classList.add('show');
+        }
+
+        // Function to refresh voucher columns by compacting data
+        function refreshVoucherColumns() {
+            columnData.forEach((column, index) => {
+                // Filter out empty strings to get only valid voucher codes
+                const validVouchers = column.filter(code => code.trim() !== '');
+                // Create a new array, filling it with valid vouchers first, then padding with empty strings
+                const refreshedColumn = validVouchers.concat(Array(totalRowsPerColumn - validVouchers.length).fill(''));
+                columnData[index] = refreshedColumn;
+            });
+            renderVoucherManagementColumns(); // Re-render the columns with the refreshed data
+            showAlert('Penyegaran Berhasil!', 'Kolom voucher telah dikompaksi.');
+        }
+
+        // Function to delete the currently selected voucher code(s)
+        function deleteSelectedVoucher() {
+            if (selectedVoucherRows.length === 0) {
+                showAlert('Peringatan!', 'Tidak ada kode voucher yang dipilih untuk dihapus.');
+                return;
+            }
+
+            // Check if all selected vouchers are in the same column
+            const firstColIndex = selectedVoucherRows[0].colIndex;
+            const allSameColumn = selectedVoucherRows.every(item => item.colIndex === firstColIndex);
+
+            if (!allSameColumn) {
+                showAlert('Peringatan!', 'Anda hanya dapat menghapus kode voucher dalam satu kolom sekaligus.');
+                // Clear selection if mixed columns are selected
+                selectedVoucherRows.forEach(item => item.element.classList.remove('selected-voucher-row'));
+                selectedVoucherRows = [];
+                return;
+            }
+
+            if (selectedVoucherRows.length > 10) {
+                showAlert('Peringatan!', `Anda dapat menghapus maksimal 10 baris sekaligus. Anda memilih ${selectedVoucherRows.length} baris.`);
+                return;
+            }
+
+            const message = `Anda yakin ingin menghapus ${selectedVoucherRows.length} kode voucher dari Voucher ${columnLabels[firstColIndex]}?`;
+
+            showAlert('Konfirmasi Hapus', message, () => {
+                // Sort selected rows in descending order of rowIndex to avoid issues when deleting
+                selectedVoucherRows.sort((a, b) => b.rowIndex - a.rowIndex);
+
+                selectedVoucherRows.forEach(item => {
+                    const colIndex = item.colIndex;
+                    const rowIndex = item.rowIndex;
+                    columnData[colIndex][rowIndex] = ''; // Delete the voucher code by setting it to empty
+                });
+
+                // Clear selection after deletion
+                selectedVoucherRows.forEach(item => item.element.classList.remove('selected-voucher-row'));
+                selectedVoucherRows = [];
+
+                renderVoucherManagementColumns(); // Re-render to reflect deletion
+                showAlert('Berhasil!', `${selectedVoucherRows.length} kode voucher telah dihapus.`);
+            }, true); // Pass true to show a confirm button
+        }
+
+        // Modified showAlert to include a confirmation option
+        function showAlert(title, message, onConfirm = null, isConfirm = false) {
+            const alertTitle = document.getElementById('alertTitle');
+            const alertMessage = document.getElementById('alertMessage');
+            const closeAlertBtn = document.getElementById('closeAlertBtn');
+            const customAlert = document.getElementById('customAlert');
+
+            alertTitle.innerText = title;
+            alertMessage.innerText = message;
+
+            // Clear previous event listener
+            closeAlertBtn.onclick = null;
+
+            // Remove any existing "Tidak" button (if it was ever added in a previous version)
+            const existingNoButton = customAlert.querySelector('.custom-alert-content button.bg-red-600');
+            if (existingNoButton) {
+                existingNoButton.remove();
+            }
+
+            if (isConfirm && onConfirm) {
+                // For confirmation, only show "Ya" button
+                closeAlertBtn.textContent = 'Ya';
+                closeAlertBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                closeAlertBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                closeAlertBtn.onclick = () => {
+                    onConfirm();
+                    customAlert.classList.remove('show');
+                };
+            } else {
+                // Standard alert behavior
+                closeAlertBtn.textContent = 'OK';
+                closeAlertBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                closeAlertBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+
+                closeAlertBtn.onclick = () => {
+                    customAlert.classList.remove('show');
+                    if (onConfirm) onConfirm(); // Execute callback if provided for non-confirm alerts
+                };
+            }
+            customAlert.classList.add('show');
+        }
+
+        // Theme management functions
+        function applyTheme(theme) {
+            const body = document.body;
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+            if (theme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggleBtn.textContent = 'Mode Terang';
+                // Ensure text is white in dark mode
+                themeToggleBtn.classList.remove('text-gray-800');
+                themeToggleBtn.classList.add('text-white');
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggleBtn.textContent = 'Mode Gelap';
+                // Ensure text is black/dark in light mode
+                themeToggleBtn.classList.remove('text-white');
+                themeToggleBtn.classList.add('text-gray-800'); /* Changed to text-gray-800 for dark text in light mode */
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                applyTheme('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                applyTheme('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Function to display admin panel buttons based on master admin status
+        function displayAdminPanelButtons() {
+            const paymentGatewayBtn = document.getElementById('paymentGatewayBtn');
+
+            if (isMasterAdmin) {
+                paymentGatewayBtn.classList.remove('hidden');
+            } else {
+                paymentGatewayBtn.classList.add('hidden');
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved theme on load
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
+
+            // Initial render of voucher cards
+            renderVoucherCards();
+
+            // Initial call to display date and time
+            updateDateTime();
+            // Update date and time every second
+            setInterval(updateDateTime, 1000);
+
+
+            const mainHeader = document.getElementById('mainHeader'); // Get the main header element
+            const mainTitle = document.getElementById('mainTitle');
+            const mainSubtitle = document.getElementById('mainSubtitle');
+
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+            const adminLoginModal = document.getElementById('adminLoginModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const voucherSection = document.getElementById('voucherSection');
+            const adminPanel = document.getElementById('adminPanel');
+            const changeAdminCredsBtn = document.getElementById('changeAdminCredsBtn');
+            const editVoucherBtn = document.getElementById('editVoucherBtn');
+            const viewVouchersBtn = document.getElementById('viewVouchersBtn'); // "Kelola Voucher" button
+            const salesReportBtn = document.getElementById('salesReportBtn'); // Sales Report button
+            const salesDataBtn = document.getElementById('salesDataBtn'); // New Sales Data button
+            const paymentGatewayBtn = document.getElementById('paymentGatewayBtn'); // New Payment Gateway button
+            const voucherManagementSection = document.getElementById('voucherManagementSection'); // New section
+            const backToAdminPanelFromVoucherMgmt = document.getElementById('backToAdminPanelFromVoucherMgmt'); // Back button in new section
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const refreshVoucherDataBtn = document.getElementById('refreshVoucherDataBtn'); // New Refresh button
+            const deleteSelectedVoucherBtn = document.getElementById('deleteSelectedVoucherBtn'); // New Delete button
+            const themeToggleBtn = document.getElementById('themeToggleBtn'); // New theme toggle button
+            const multiSelectToggleBtn = document.getElementById('multiSelectToggleBtn'); // New multi-select toggle button
+
+            // Elements for data input in Voucher Management
+            const selectColumn = document.getElementById('selectColumn');
+            const excelPasteArea = document.getElementById('excelPasteArea');
+            const loadColumnDataBtn = document.getElementById('loadColumnDataBtn');
+
+            // Payment method selection modal elements
+            const paymentMethodModal = document.getElementById('paymentMethodModal');
+            const closePaymentMethodModalBtn = document.getElementById('closePaymentMethodModalBtn'); // Corrected line
+            const paymentMethodForm = document.getElementById('paymentMethodForm');
+            const whatsappNumberInput = document.getElementById('whatsappNumber');
+            const emailAddressInput = document.getElementById('emailAddress');
+
+            const editVoucherModal = document.getElementById('editVoucherModal');
+            const closeEditVoucherModalBtn = document.getElementById('closeEditVoucherModalBtn');
+            const saveVoucherChangesBtn = document.getElementById('saveVoucherChangesBtn');
+            const cancelEditVoucherBtn = document.getElementById('cancelEditVoucherBtn');
+            const editHeaderBtn = document.getElementById('editHeaderBtn'); // Get the new button
+            const customAlert = document.getElementById('customAlert');
+            const closeAlertBtn = document.getElementById('closeAlertBtn');
+
+            // Header Edit Modal elements (New)
+            const editHeaderModal = document.getElementById('editHeaderModal');
+            const closeEditHeaderModalBtn = document.getElementById('closeEditHeaderModalBtn');
+            const headerTitleInput = document.getElementById('headerTitleInput');
+            const headerSubtitleInput = document.getElementById('headerSubtitleInput');
+            const saveHeaderChangesBtn = document.getElementById('saveHeaderChangesBtn');
+            const cancelHeaderEditBtn = document.getElementById('cancelHeaderEditBtn');
+
+            // Change Admin Credentials Modal elements (New)
+            const changeAdminCredsModal = document.getElementById('changeAdminCredsModal');
+            const closeChangeAdminCredsModalBtn = document.getElementById('closeChangeAdminCredsModalBtn');
+            const changeAdminCredsForm = document.getElementById('changeAdminCredsForm');
+            const currentAdminUsernameInput = document.getElementById('currentAdminUsername');
+            const currentAdminPasswordInput = document.getElementById('currentAdminPassword');
+            const newAdminUsernameInput = document.getElementById('newAdminUsername');
+            const newAdminPasswordInput = document.getElementById('newAdminPassword');
+
+
+            // Sales Report Modal elements
+            const salesReportModal = document.getElementById('salesReportModal');
+            const closeSalesReportModalBtn = document.getElementById('closeSalesReportModalBtn');
+            const closeSalesReportModalXBtn = document.getElementById('closeSalesReportModalXBtn');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const generateCustomReportBtn = document.getElementById('generateCustomReportBtn');
+
+            // Sales Data Modal elements (New)
+            const salesDataModal = document.getElementById('salesDataModal');
+            const closeSalesDataModalBtn = document.getElementById('closeSalesDataModalBtn');
+            const closeSalesDataModalXBtn = document.getElementById('closeSalesDataModalXBtn');
+
+
+            // Populate selectColumn dropdown
+            columnLabels.forEach((label, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `Voucher ${label}`; // Changed from Kolom X to Voucher X
+                selectColumn.appendChild(option);
+            });
+
+            // Close custom alert (initial setup for standard OK button)
+            closeAlertBtn.addEventListener('click', () => {
+                customAlert.classList.remove('show');
+            });
+            customAlert.addEventListener('click', (e) => {
+                if (e.target === customAlert) {
+                    customAlert.classList.remove('show');
+                }
+            });
+
+            // Show the login modal when Admin Login button is clicked
+            adminLoginBtn.addEventListener('click', () => {
+                // Clear username and password fields when the modal is opened
+                usernameInput.value = '';
+                passwordInput.value = '';
+                adminLoginModal.classList.add('show');
+            });
+
+            // Hide the login modal when close button or overlay is clicked
+            closeModalBtn.addEventListener('click', () => {
+                adminLoginModal.classList.remove('show');
+            });
+
+            adminLoginModal.addEventListener('click', (e) => {
+                if (e.target === adminLoginModal) {
+                    adminLoginModal.classList.remove('show');
+                }
+            });
+
+            // Handle form submission for admin login
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+
+                if (username === masterUsername && password === masterPassword) {
+                    console.log('Login successful as Master Admin!');
+                    showAlert('Login Berhasil!', 'Selamat datang, Master Admin.');
+                    isMasterAdmin = true;
+                    adminLoginModal.classList.remove('show'); // Hide modal on successful login
+
+                    // Hide voucher section and show admin panel
+                    voucherSection.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    adminLoginBtn.classList.add('hidden'); // Hide login button
+                    adminLogoutBtn.classList.remove('hidden'); // Show logout button
+                    mainHeader.classList.remove('hidden'); // Ensure header is visible when on admin panel
+                    displayAdminPanelButtons(); // Show all buttons for master admin
+
+                } else if (username === regularAdminUsername && password === regularAdminPassword) {
+                    console.log('Login successful as Regular Admin!');
+                    showAlert('Login Berhasil!', 'Selamat datang, Admin.');
+                    isMasterAdmin = false;
+                    adminLoginModal.classList.remove('show'); // Hide modal on successful login
+
+                    // Hide voucher section and show admin panel
+                    voucherSection.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    adminLoginBtn.classList.add('hidden'); // Hide login button
+                    adminLogoutBtn.classList.remove('hidden'); // Show logout button
+                    mainHeader.classList.remove('hidden'); // Ensure header is visible when on admin panel
+                    displayAdminPanelButtons(); // Hide Payment Gateway for regular admin
+
+                } else {
+                    console.log('Login failed: Invalid username atau password.');
+                    showAlert('Login Gagal!', 'Username atau password salah.');
+                }
+            });
+
+            // Handle Logout
+            adminLogoutBtn.addEventListener('click', () => {
+                // Show voucher section and hide admin panel
+                voucherSection.classList.remove('hidden');
+                adminPanel.classList.add('hidden');
+                adminLoginBtn.classList.remove('hidden'); // Show login button
+                adminLogoutBtn.classList.add('hidden'); // Hide logout button
+                mainHeader.classList.remove('hidden'); // Ensure header is visible on main page
+                showAlert('Logout Berhasil!', 'Anda telah berhasil logout dari panel admin.');
+                isMasterAdmin = false; // Reset master admin flag on logout
+
+                // The fields will be cleared when the login modal is opened next time.
+            });
+
+            // Handle "Ubah User Name dan Password Admin" button click
+            changeAdminCredsBtn.addEventListener('click', () => {
+                // Populate current credentials fields with regular admin credentials
+                currentAdminUsernameInput.value = regularAdminUsername;
+                currentAdminPasswordInput.value = regularAdminPassword;
+                // Clear new credentials fields
+                newAdminUsernameInput.value = '';
+                newAdminPasswordInput.value = '';
+                changeAdminCredsModal.classList.add('show'); // Show the modal
+            });
+
+            // Handle form submission for changing admin credentials
+            changeAdminCredsForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const currentUsername = currentAdminUsernameInput.value;
+                const currentPassword = currentAdminPasswordInput.value;
+                const newUsername = newAdminUsernameInput.value;
+                const newPassword = newAdminPasswordInput.value;
+
+                // Only allow changing if current credentials match the *regular* admin credentials
+                if (currentUsername === regularAdminUsername && currentPassword === regularAdminPassword) {
+                    regularAdminUsername = newUsername;
+                    regularAdminPassword = newPassword;
+                    showAlert('Perubahan Berhasil!', 'Username dan password admin telah diperbarui.');
+                    changeAdminCredsModal.classList.remove('show'); // Hide modal
+                } else {
+                    showAlert('Perubahan Gagal!', 'Username atau password admin saat ini salah.');
+                }
+            });
+
+            // Handle canceling admin credentials edit
+            cancelAdminCredsBtn.addEventListener('click', () => {
+                changeAdminCredsModal.classList.remove('show');
+            });
+
+            // Hide the change admin credentials modal when close button or overlay is clicked
+            closeChangeAdminCredsModalBtn.addEventListener('click', () => {
+                changeAdminCredsModal.classList.remove('show');
+            });
+            changeAdminCredsModal.addEventListener('click', (e) => {
+                if (e.target === changeAdminCredsModal) {
+                    changeAdminCredsModal.classList.remove('show');
+                }
+            });
+
+            // Handle "Edit Durasi dan Harga Voucher" button click
+            editVoucherBtn.addEventListener('click', () => {
+                renderEditableVoucherForms(); // Render forms before showing modal
+                editVoucherModal.classList.add('show'); // Show the edit voucher modal
+            });
+
+            // Handle "Kelola Voucher" button click (new functionality)
+            viewVouchersBtn.addEventListener('click', () => {
+                adminPanel.classList.add('hidden'); // Hide admin panel
+                voucherSection.classList.add('hidden'); // Hide main voucher section
+                mainHeader.classList.add('hidden'); // Hide the main header
+                voucherManagementSection.classList.remove('hidden'); // Show voucher management section
+                currentVoucherPage = 1; // Reset to first page
+                renderVoucherManagementColumns(); // Render columns for management
+                // Removed: showAlert('Manajemen Voucher', 'Halaman manajemen voucher telah dibuka.');
+            });
+
+            // Handle "Laporan Penjualan" button click
+            salesReportBtn.addEventListener('click', () => {
+                generateSalesReport(); // Calculate and display report (initial view with default dates)
+            });
+
+            // Handle "Data Penjualan" button click (New)
+            salesDataBtn.addEventListener('click', () => {
+                displaySuccessfulSalesData(); // Display the sales data
+            });
+
+            // Handle "Payment Gateway" button click (New)
+            paymentGatewayBtn.addEventListener('click', () => {
+                showAlert('Fitur Payment Gateway', 'Fungsionalitas Payment Gateway akan diintegrasikan di sini.');
+            });
+
+            // Handle "Buat Laporan Kustom" button click
+            generateCustomReportBtn.addEventListener('click', () => {
+                const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+                const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+
+                if (startDate && endDate) {
+                    // Set end date to end of the day to include all sales on that day
+                    endDate.setHours(23, 59, 59, 999);
+
+                    if (startDate > endDate) {
+                        showAlert('Kesalahan Tanggal!', 'Tanggal "Dari" tidak boleh lebih lambat dari tanggal "Sampai".');
+                        return;
+                    }
+                    generateSalesReport(startDate, endDate);
+                } else {
+                    showAlert('Input Tanggal Tidak Lengkap!', 'Mohon pilih tanggal mulai dan tanggal akhir untuk laporan kustom.');
+                }
+            });
+
+
+            // Handle "Kembali ke Halaman Admin" button click in voucher management section
+            backToAdminPanelFromVoucherMgmt.addEventListener('click', () => {
+                voucherManagementSection.classList.add('hidden'); // Hide voucher management section
+                adminPanel.classList.remove('hidden'); // Show admin panel
+                mainHeader.classList.remove('hidden'); // Show the main header again
+                showAlert('Kembali ke Halaman Admin', 'Anda telah kembali ke halaman admin.');
+            });
+
+            // Pagination for Voucher Management
+            prevPageBtn.addEventListener('click', () => {
+                if (currentVoucherPage > 1) {
+                    currentVoucherPage--;
+                    renderVoucherManagementColumns();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (currentVoucherPage < totalVoucherPages) {
+                    currentVoucherPage++;
+                    renderVoucherManagementColumns();
+                }
+            });
+
+            // Handle loading data into a column from paste area
+            loadColumnDataBtn.addEventListener('click', () => {
+                const selectedColIndex = parseInt(selectColumn.value);
+                const pastedData = excelPasteArea.value.split('\n').map(line => line.trim()).filter(line => line !== ''); // Split by line, trim, and filter out empty lines
+
+                if (pastedData.length === 0) {
+                    showAlert('Peringatan!', 'Tidak ada data untuk dimuat. Pastikan Anda menempelkan data.');
+                    return;
+                }
+
+                let targetColumn = columnData[selectedColIndex];
+                let addedCount = 0;
+                let overflowCount = 0;
+
+                // Find the first empty slot to start appending
+                let firstEmptyIndex = targetColumn.findIndex(item => item === '');
+
+                // If no empty slots, it means the column is full
+                if (firstEmptyIndex === -1) {
+                    firstEmptyIndex = totalRowsPerColumn; // Set to end to indicate full
+                }
+
+                for (let i = 0; i < pastedData.length; i++) {
+                    if (firstEmptyIndex + addedCount < totalRowsPerColumn) {
+                        targetColumn[firstEmptyIndex + addedCount] = pastedData[i];
+                        addedCount++;
+                    } else {
+                        overflowCount++;
+                    }
+                }
+
+                renderVoucherManagementColumns(); // Re-render to show updated data
+                excelPasteArea.value = ''; // Clear the textarea after loading
+
+                let alertMessage = `Data berhasil dimuat ke Voucher ${columnLabels[selectedColIndex]}.`;
+                if (addedCount > 0 && overflowCount === 0) {
+                    showAlert('Data Dimuat!', `${addedCount} baris ${alertMessage}`);
+                } else if (addedCount > 0 && overflowCount > 0) {
+                    showAlert('Data Dimuat dengan Peringatan!', `${addedCount} baris ${alertMessage} ${overflowCount} baris tidak dimuat karena kolom penuh.`);
+                } else if (addedCount === 0 && overflowCount > 0) {
+                    showAlert('Kolom Penuh!', `Voucher ${columnLabels[selectedColIndex]} sudah penuh. Tidak ada data yang dimuat.`);
+                }
+            });
+
+            // Handle Refresh Voucher Data button click
+            refreshVoucherDataBtn.addEventListener('click', () => {
+                refreshVoucherColumns();
+            });
+
+            // Handle Delete Selected Voucher button click
+            deleteSelectedVoucherBtn.addEventListener('click', deleteSelectedVoucher);
+
+            // Handle Multi-Select Toggle button click
+            multiSelectToggleBtn.addEventListener('click', () => {
+                isMultiSelectMode = !isMultiSelectMode;
+                // Clear all selections when toggling mode
+                selectedVoucherRows.forEach(item => item.element.classList.remove('selected-voucher-row'));
+                selectedVoucherRows = [];
+
+                if (isMultiSelectMode) {
+                    multiSelectToggleBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                    multiSelectToggleBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    showAlert('Mode Hapus Voucher Aktif', 'Sekarang Anda dapat mengetuk untuk memilih beberapa baris (maks 10) dalam satu kolom.');
+                } else {
+                    multiSelectToggleBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    multiSelectToggleBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+                    showAlert('Mode Hapus Voucher Nonaktif', 'Kembali ke mode pilihan tunggal.');
+                }
+            });
+
+
+            // Handle theme toggle button click
+            themeToggleBtn.addEventListener('click', toggleTheme);
+
+            // Handle the new "Edit Header" button click
+            editHeaderBtn.addEventListener('click', () => {
+                // Populate the input fields with current header text
+                headerTitleInput.value = mainTitle.textContent;
+                headerSubtitleInput.value = mainSubtitle.textContent;
+                editHeaderModal.classList.add('show'); // Show the edit header modal
+            });
+
+            // Handle saving changes from edit header modal
+            saveHeaderChangesBtn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default form submission
+                mainTitle.textContent = headerTitleInput.value;
+                mainSubtitle.textContent = headerSubtitleInput.value;
+                editHeaderModal.classList.remove('show'); // Hide the edit header modal
+                showAlert('Perubahan Header Disimpan!', 'Judul dan sub-judul halaman telah diperbarui.');
+            });
+
+            // Handle canceling header edit
+            cancelHeaderEditBtn.addEventListener('click', () => {
+                editHeaderModal.classList.remove('show');
+            });
+
+            // Hide the edit header modal when close button or overlay is clicked
+            closeEditHeaderModalBtn.addEventListener('click', () => {
+                editHeaderModal.classList.remove('show');
+            });
+            editHeaderModal.addEventListener('click', (e) => {
+                if (e.target === editHeaderModal) {
+                    editHeaderModal.classList.remove('show');
+                }
+            });
+
+            // Hide the edit voucher modal when close button or overlay is clicked
+            closeEditVoucherModalBtn.addEventListener('click', () => {
+                editVoucherModal.classList.remove('show');
+            });
+            cancelEditVoucherBtn.addEventListener('click', () => {
+                editVoucherModal.classList.remove('show');
+            });
+            editVoucherModal.addEventListener('click', (e) => {
+                if (e.target === editVoucherModal) {
+                    editVoucherModal.classList.remove('show');
+                }
+            });
+
+            // Handle saving changes from edit voucher modal
+            saveVoucherChangesBtn.addEventListener('click', () => {
+                // Collect updated data from the form
+                vouchers.forEach(voucher => {
+                    const nameInput = document.getElementById(`name-${voucher.id}`);
+                    const durationInput = document.getElementById(`duration-${voucher.id}`);
+                    const priceInput = document.getElementById(`price-${voucher.id}`);
+                    const isActiveInput = document.getElementById(`isActive-${voucher.id}`);
+
+                    if (nameInput && durationInput && priceInput && isActiveInput) {
+                        voucher.name = nameInput.value;
+                        voucher.duration = durationInput.value;
+                        voucher.price = parseInt(priceInput.value);
+                        voucher.isActive = isActiveInput.checked;
+                    }
+                });
+
+                renderVoucherCards(); // Re-render main page vouchers with updated data (hides inactive ones)
+                editVoucherModal.classList.remove('show'); // Hide the edit modal
+                showAlert('Perubahan Disimpan!', 'Durasi, harga, nama, dan status voucher telah diperbarui.');
+            });
+
+            // Event listeners for the new payment method modal
+            closePaymentMethodModalBtn.addEventListener('click', () => {
+                paymentMethodModal.classList.remove('show');
+            });
+            paymentMethodModal.addEventListener('click', (e) => {
+                if (e.target === paymentMethodModal) {
+                    paymentMethodModal.classList.remove('show');
+                }
+            });
+
+            paymentMethodForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+                const whatsappNumber = whatsappNumberInput.value.trim();
+                const emailAddress = emailAddressInput.value.trim();
+
+                if (!selectedPaymentMethod) {
+                    showAlert('Peringatan!', 'Mohon pilih metode pembayaran.');
+                    return;
+                }
+                if (!whatsappNumber) {
+                    showAlert('Peringatan!', 'Nomor WhatsApp wajib diisi.');
+                    return;
+                }
+                if (!emailAddress) {
+                    showAlert('Peringatan!', 'Alamat Email wajib diisi.');
+                    return;
+                }
+
+                // All fields are valid, proceed to final payment processing
+                paymentMethodModal.classList.remove('show'); // Hide payment method modal
+                const voucherName = paymentMethodModal.dataset.voucherName;
+                const voucherIndex = parseInt(paymentMethodModal.dataset.voucherIndex);
+                processFinalPayment(voucherName, voucherIndex, whatsappNumber, emailAddress, selectedPaymentMethod.value);
+            });
+
+            // Event listeners for Sales Report Modal
+            closeSalesReportModalBtn.addEventListener('click', () => {
+                salesReportModal.classList.remove('show');
+            });
+            closeSalesReportModalXBtn.addEventListener('click', () => {
+                salesReportModal.classList.remove('show');
+            });
+            salesReportModal.addEventListener('click', (e) => {
+                if (e.target === salesReportModal) {
+                    salesReportModal.classList.remove('show');
+                }
+            });
+
+            // Event listeners for Sales Data Modal (New)
+            closeSalesDataModalBtn.addEventListener('click', () => {
+                salesDataModal.classList.remove('show');
+            });
+            closeSalesDataModalXBtn.addEventListener('click', () => {
+                salesDataModal.classList.remove('show');
+            });
+            salesDataModal.addEventListener('click', (e) => {
+                if (e.target === salesDataModal) {
+                    salesDataModal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
